@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.mapper.MailboxMapper">
+
+    <select id="adminPage" resultType="com.app.model.Mailbox">
+        select m.*,u.username as userAdminName
+        from lm_mailbox as m
+        left join lm_sys_user as u on m.user_id = u.id
+        <where>
+            m.is_del = 0
+            and m.status = 1
+        </where>
+        <if test="isReply != null and isReply != ''">
+            and m.is_reply = #{isReply}
+        </if>
+        <if test="type != null and type != ''">
+            and m.type = #{type}
+        </if>
+        <if test="categoryId != null and categoryId != ''">
+            and m.category_id = #{categoryId}
+        </if>
+        <if test="title != null and title != ''">
+            and m.title like concat('%',#{title,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="userId != null">
+            and m.user_id=#{userId}
+        </if>
+        order by m.id desc
+    </select>
+</mapper>

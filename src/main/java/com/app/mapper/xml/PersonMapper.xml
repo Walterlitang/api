@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.mapper.PersonMapper">
+    <select id="adminPage" resultType="com.app.model.Person">
+        select lm_person.*,lm_sys_category.name as typeName
+        from lm_person
+        left join lm_sys_category on lm_person.type = lm_sys_category.id
+        <where>
+            is_del = 0
+        </where>
+        <if test="name != null and name != ''">
+            and name like concat('%',#{name,jdbcType=VARCHAR},'%')
+        </if>
+        order by id desc
+    </select>
+    <select id="webPage" resultType="com.app.model.Person">
+        select lm_person.*,lm_sys_category.name as typeName
+        from lm_person
+        left join lm_sys_category on lm_person.type = lm_sys_category.id
+        <where>
+            lm_person.is_del = 0
+            and lm_person.status = 1
+            and lm_person.type = #{type,jdbcType=INTEGER}
+        </where>
+        order by lm_person.sort, lm_person.create_time desc
+    </select>
+    <select id="personTypeList" resultType="com.app.model.Person">
+        select *
+        from lm_sys_category
+        <where>
+            status = 1
+            and pid = 18
+            and is_article = 1
+        </where>
+        order by sort, create_time desc
+    </select>
+</mapper>

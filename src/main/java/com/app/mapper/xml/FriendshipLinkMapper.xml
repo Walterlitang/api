@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.mapper.FriendshipLinkMapper">
+
+    <select id="adminPage" resultType="com.app.model.FriendshipLink">
+        select fl.*, sc.name as categoryName
+        from lm_friendship_link fl
+        left join lm_sys_category as sc on sc.id = fl.c_id
+        <where>
+            fl.is_del = 0
+            <if test="cid != null and cid != ''">
+                and (
+                (sc.pid = 0 and sc.id = #{cid})
+                or
+                (sc.id = #{cid})
+                or
+                (sc.pid = #{cid})
+                )
+            </if>
+            <if test="linkAddress != null and linkAddress != ''">
+                and fl.link_address like concat('%', #{linkAddress, jdbcType=VARCHAR}, '%')
+            </if>
+        </where>
+        order by fl.id desc
+    </select>
+
+
+    <select id="webList" resultType="com.app.model.SysCategory">
+        select sc.*,fl.id as fid,fl.link_address,fl.icon
+        from lm_sys_category as sc
+        left join lm_friendship_link as fl on sc.id = fl.c_id and fl.is_del = 0
+        <where>
+            sc.status = 1
+            and sc.code='FRIENDSHIPLINK'
+        </where>
+        order by fl.sort,fl.create_time desc
+    </select>
+    <select id="theaterList" resultType="com.app.model.SysCategory">
+        select sc.name,fl.id,fl.link_address,fl.icon
+        from lm_sys_category as sc
+        left join lm_friendship_link as fl on sc.id = fl.c_id and fl.is_del = 0 and fl.status = 1
+        <where>
+            sc.status = 1
+            and sc.id = 120
+            and sc.code='FRIENDSHIPLINK'
+        </where>
+        order by fl.sort,fl.create_time desc
+        limit 0,5;
+    </select>
+    <select id="movieList" resultType="com.app.model.SysCategory">
+        select sc.name,fl.id,fl.link_address,fl.icon
+        from lm_sys_category as sc
+        left join lm_friendship_link as fl on sc.id = fl.c_id and fl.is_del = 0 and fl.status = 1
+        <where>
+            sc.status = 1
+            and sc.id = 124
+            and sc.code='FRIENDSHIPLINK'
+        </where>
+        order by fl.sort,fl.create_time desc
+        limit 0,4;
+    </select>
+    <select id="otherList" resultType="com.app.model.SysCategory">
+        SELECT sc.name,fl.id, fl.link_address, fl.icon
+        FROM lm_sys_category AS sc
+        LEFT JOIN lm_friendship_link AS fl ON sc.id = fl.c_id AND fl.is_del = 0 and fl.status = 1
+        <where>sc.status = 1
+            AND sc.id IN (122, 123, 121)
+            AND sc.code = 'FRIENDSHIPLINK'
+            AND (
+            sc.id = 122 AND fl.create_time = (SELECT MAX(fl2.create_time) FROM lm_friendship_link fl2 WHERE fl2.c_id =
+            122)
+            OR
+            sc.id = 123 AND fl.create_time = (SELECT MAX(fl2.create_time) FROM lm_friendship_link fl2 WHERE fl2.c_id =
+            123)
+            OR
+            sc.id = 121 AND fl.create_time = (SELECT MAX(fl2.create_time) FROM lm_friendship_link fl2 WHERE fl2.c_id =
+            121)
+            )
+        </where>
+        order by fl.sort,fl.create_time desc
+    </select>
+    <select id="webListByRootId" resultType="com.app.model.SysCategory">
+        select sc.*,fl.id as fid,fl.link_address,fl.icon,fl.title
+        from lm_sys_category as sc
+        left join lm_friendship_link as fl on sc.id = fl.c_id and fl.is_del = 0 and fl.status = 1
+        <where>
+            sc.status = 1
+            and sc.id = #{rootId}
+            and sc.code='FRIENDSHIPLINK'
+        </where>
+        order by fl.sort,fl.create_time desc
+    </select>
+</mapper>

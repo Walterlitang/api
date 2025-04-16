@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.mapper.SysUserMapper">
+
+    <select id="getChiefList" resultType="com.app.model.SysUser">
+        select
+        lsu.*,
+        count(lm.id) as letterCount,
+        sum(case when lm.is_reply = 1 then 1 else 0 end) as repliesCount
+        from
+        lm_sys_user lsu
+        left join
+        lm_mailbox lm on lsu.id = lm.user_id and lm.is_del = 0 and lm.status = 1
+        <where>
+            lsu.role_id = 2
+        </where>
+        group by
+        lsu.id
+        order by
+        lsu.sort ASC, lsu.id desc
+    </select>
+    <select id="getUnitList" resultType="com.app.model.SysCategory">
+        select id,name
+        from lm_sys_category
+        <where>
+            pid = 6
+            and
+            status = 1
+        </where>
+        order by sort ASC, id desc
+    </select>
+</mapper>

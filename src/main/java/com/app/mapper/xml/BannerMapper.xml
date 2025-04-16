@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.mapper.BannerMapper">
+
+    <select id="adminPage" resultType="com.app.model.Banner">
+        select *
+        from lm_banner
+        <where>
+            is_del = 0
+        </where>
+        <if test="title != null and title != ''">
+            and title like concat('%',#{title,jdbcType=VARCHAR},'%')
+        </if>
+        order by id desc
+    </select>
+    <select id="webPage" resultType="com.app.model.Banner">
+        select *
+        from lm_banner
+        <where>
+            is_del = 0
+            and status = 1
+        </where>
+        order by sort, create_time desc
+    </select>
+</mapper>
