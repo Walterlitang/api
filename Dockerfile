@@ -1,1 +1,0 @@
-FROM jdk:8VOLUME /tmpADD target/zx-order-0.0.1-SNAPSHOT.jar app.jarEXPOSE 8888ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar","--spring.profiles.active=prd"]
